@@ -3,6 +3,9 @@ import 'package:belajar_flutter/pages/main_page.dart';
 import 'package:belajar_flutter/widgets/todo_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../cubit/todo_cubit.dart';
 
 class AddNewTodoPage extends StatefulWidget {
   const AddNewTodoPage({super.key});
@@ -14,37 +17,36 @@ class AddNewTodoPage extends StatefulWidget {
 class _AddNewTodoPageState extends State<AddNewTodoPage> {
   late TextEditingController titleController;
   late TextEditingController descriptionController;
-  
+
   @override
-  void initState(){
+  void initState() {
     titleController = TextEditingController(text: '');
     descriptionController = TextEditingController(text: '');
     super.initState();
   }
 
-@override
+  @override
   void dispose() {
     titleController.dispose();
     descriptionController.dispose();
     super.dispose();
   }
 
-
   Widget build(BuildContext context) {
+    final todoCubit = context.read<TodoCubit>();
     return Scaffold(
-      appBar: AppBar (
+      appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 141, 96, 149),
         title: Text('Add New To Do'),
         centerTitle: true,
         leading: IconButton(
-        onPressed: () {
-          Navigator.pop(context);
-        }, 
-        icon: const Icon(
-          Icons.arrow_back_ios_new,
-          color: Colors.white,
-          )
-        ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.white,
+            )),
       ),
       body: Center(
         child: Container(
@@ -60,10 +62,9 @@ class _AddNewTodoPageState extends State<AddNewTodoPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // judul
-              Text('Judul', 
-              style: TextStyle(
-                fontWeight: FontWeight.bold
-              ),
+              Text(
+                'Judul',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 height: 15,
@@ -75,10 +76,9 @@ class _AddNewTodoPageState extends State<AddNewTodoPage> {
                 height: 15,
               ),
               // description
-              Text('Description',
-              style: TextStyle(
-                fontWeight: FontWeight.bold
-              ), 
+              Text(
+                'Description',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 height: 15,
@@ -88,22 +88,27 @@ class _AddNewTodoPageState extends State<AddNewTodoPage> {
               ),
               const SizedBox(
                 height: 24,
-                ),
+              ),
               Align(
                 alignment: Alignment.center,
-                child: ElevatedButton(
-                  onPressed: () {
-                    TodoTIle newTile = TodoTIle(
-                      title: titleController.text, 
-                      description: descriptionController.text);
-                    
-                    todolist.add(newTile);
-
-                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MainPage()
-                    ), (route) => false,
+                child: BlocConsumer<TodoCubit, TodoState>(
+                  listener: (context, state) {
+                    if (state is TodoAdd) {
+                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:(context) => MainPage(),), (route) => false);
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is TodoLoading) {
+                      return CircularProgressIndicator();
+                    }
+                    return ElevatedButton(
+                      onPressed: () {
+                        todoCubit.onAddNewTodo(
+                            titleController.text, descriptionController.text);
+                      },
+                      child: Text('Submit'),
                     );
-                  }, 
-                  child: Text('iyo itumi'),
+                  },
                 ),
               ),
             ],

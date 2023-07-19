@@ -1,9 +1,11 @@
+import 'package:belajar_flutter/cubit/todo_cubit.dart';
 import 'package:belajar_flutter/pages/main_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'widgets/todo_tile.dart';
 
-void main(){
+void main() {
   runApp(App());
 }
 
@@ -12,10 +14,13 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MainPage(),
+    return BlocProvider(
+      create: (context) => TodoCubit(),
+      child: MaterialApp(
+        home: MainPage(),
+      ),
     );
   }
 }
 
-List<TodoTIle> todolist = [];
+// List<TodoTIle> todolist = [];

@@ -1,5 +1,7 @@
+import 'package:belajar_flutter/cubit/todo_cubit.dart';
 import 'package:belajar_flutter/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'add_new_todo_page.dart';
 
@@ -10,6 +12,8 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final todoCubit = context.read<TodoCubit>();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 141, 96, 149),
@@ -28,7 +32,7 @@ class MainPage extends StatelessWidget {
         padding: EdgeInsets.all(8),
         child: SingleChildScrollView(
           child: Column(
-            children: todolist,
+            children: todoCubit.todolist,
           ),
         ),
       ) 
